@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <ctype.h>  // For isalnum function
+#define SIZE 20
+
+char s[SIZE];
+int top = -1;
+
+// Push an element onto the stack
+void push(char elem) {
+    if (top < SIZE - 1) {  // Ensure there is space in the stack
+        s[++top] = elem;
+    } else {
+        printf("Stack Overflow\n");
+    }
+}
+
+// Pop an element from the stack
+char pop() {
+    if (top == -1) {
+        printf("Stack Underflow\n");
+        return -1;  // Return an error value
+    }
+    return s[top--];
+}
+
+// Function to return the precedence of operators
+int precedence(char elem) {
+    switch (elem) {
+        case '#': return 0;  // Stack bottom marker
+        case '(': return 1;  // Open parenthesis
+        case '+':
+        case '-': return 2;  // Addition/Subtraction
+        case '*':
+        case '/':
+        case '%': return 3;  // Multiplication/Division/Modulo
+        case '$':
+        case '^': return 4;  // Exponentiation
+        default: return -1;  // For invalid characters
+    }
+}
+
+// Main function to convert infix to postfix
+int main() {
+    char infix[50], postfix[50], ch, elem;
+    int i = 0, k = 0;
+   
+    // Prompt the user for the infix expression
+    printf("\nEnter the Infix Expression: ");
+    scanf("%s", infix);
+
+    // Initialize stack with '#' to denote the bottom of the stack
+    push('#');
+
+    // Process each character in the infix expression
+    while ((ch = infix[i++]) != '\0') {
+        if (ch == '(') {
+            // If '(' is encountered, push it to the stack
+            push(ch);
+        } else if (isalnum(ch)) {
+            // If the character is an operand, add it to the postfix expression
+            postfix[k++] = ch;
+        } else if (ch == ')') {
+            // If ')' is encountered, pop from the stack until '(' is found
+            while (s[top] != '(') {
+                postfix[k++] = pop();
+            }
+            elem = pop();  // Pop '('
+        } else {
+            // If an operator is encountered, pop operators from the stack
+            // that have higher or equal precedence
+            while (precedence(s[top]) >= precedence(ch)) {
+                postfix[k++] = pop();
+            }
+            // Push the current operator onto the stack
+            push(ch);
+        }
+    }
+
+    // Pop all the remaining operators from the stack
+    while (s[top] != '#') {
+        postfix[k++] = pop();
+    }
+
+    // Null-terminate the postfix expression
+    postfix[k] = '\0';
+
+    // Print the given infix expression and the converted postfix expression
+    printf("\nGiven Infix Expression: %s\n", infix);
+    printf("Postfix Expression: %s\n", postfix);
+
+    return 0;
+}
