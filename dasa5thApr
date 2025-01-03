@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <math.h>  // For pow()
+#include <string.h> // For strlen()
+
+#define MAX 50
+
+// Push function
+void push(int Stack[], int *top, int elem) {
+    if (*top < MAX - 1) {
+        *top = *top + 1;
+        Stack[*top] = elem;
+    } else {
+        printf("Stack Overflow\n");
+    }
+}
+
+// Pop function
+int pop(int Stack[], int *top) {
+    if (*top >= 0) {
+        int elem = Stack[*top];
+        *top = *top - 1;
+        return elem;
+    } else {
+        printf("Stack Underflow\n");
+        return -1;  // Return error value
+    }
+}
+
+// Main evaluation function for postfix expression
+int main() {
+    int iastack[MAX];  // Stack to store operands
+    int top = -1;      // Stack pointer, initialized to -1 (empty stack)
+    int op1, op2, res;
+    char expr[MAX];    // Input postfix expression
+    char symb;
+
+    printf("\nEnter a valid postfix expression: ");
+    scanf("%s", expr); // Reading the postfix expression
+
+    // Iterate through the expression
+    for (int i = 0; i < strlen(expr); i++) {
+        symb = expr[i];
+
+        // If the symbol is a digit, push it to the stack
+        if (isdigit(symb)) {
+            push(iastack, &top, symb - '0');  // Convert char to int
+        }
+        else {  // If it's an operator, pop two operands and apply the operation
+            op2 = pop(iastack, &top);
+            op1 = pop(iastack, &top);
+
+            switch (symb) {
+                case '+': res = op1 + op2; break;
+                case '-': res = op1 - op2; break;
+                case '*': res = op1 * op2; break;
+                case '/': 
+                    if (op2 != 0) {
+                        res = op1 / op2; 
+                    } else {
+                        printf("Error: Division by zero!\n");
+                        return -1;
+                    }
+                    break;
+                case '%': res = op1 % op2; break;
+                case '^': res = (int)pow(op1, op2); break;
+                default:
+                    printf("Error: Invalid operator '%c'\n", symb);
+                    return -1;
+            }
+
+            // Push the result back onto the stack
+            push(iastack, &top, res);
+        }
+    }
+
+    // The final result should be the only element left in the stack
+    res = pop(iastack, &top);
+    printf("\nValue of the postfix expression is %d\n", res);
+
+    return 0;
+}
