@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>  // For string functions
+
+#define MAX 100
+char stack[MAX];  // Stack to store characters
+int top = -1;     // Stack pointer
+
+// Push function to add an element to the stack
+void push(char element) {
+    if (top == MAX - 1) {
+        printf("Stack Overflow\n");
+        return;
+    }
+    stack[++top] = element;
+}
+
+// Pop function to remove and return the top element from the stack
+char pop() {
+    if (top == -1) {
+        printf("Stack Underflow\n");
+        return -1;  // Return -1 for error, but it's not valid for chars
+    }
+    return stack[top--];
+}
+
+// Display the stack elements
+void display() {
+    if (top == -1) {
+        printf("Stack is empty\n");
+        return;
+    }
+    printf("Stack elements are:\n");
+    for (int i = top; i >= 0; i--) {
+        printf("%c\n", stack[i]);
+    }
+}
+
+// Function to check if a string is a palindrome using the stack
+int isPalindrome(char str[]) {
+    int i = 0;
+    int length = strlen(str);
+    
+    // Push all characters of the string into the stack
+    for (i = 0; i < length; i++) {
+        push(str[i]);
+    }
+    
+    // Pop characters and compare them with the original string
+    for (i = 0; i < length; i++) {
+        if (str[i] != pop()) {
+            return 0;  // Not a palindrome
+        }
+    }
+    return 1;  // It's a palindrome
+}
+
+// Main function to drive the program
+int main() {
+    int choice;
+    char str[MAX];
+    char element;
+
+    while (1) {
+        printf("\nStack Operations:\n");
+        printf("1. Push\n");
+        printf("2. Pop\n");
+        printf("3. Check Palindrome\n");
+        printf("4. Display\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter element to push: ");
+                scanf(" %c", &element);  // Notice the space before %c to skip any previous newline
+                push(element);
+                break;
+            case 2:
+                element = pop();
+                if (element != -1)
+                    printf("Popped element: %c\n", element);
+                break;
+            case 3:
+                printf("Enter a string: ");
+                scanf("%s", str);  // Input the string
+                if (isPalindrome(str))
+                    printf("The entered string is a palindrome.\n");
+                else
+                    printf("The entered string is not a palindrome.\n");
+                break;
+            case 4:
+                display();
+                break;
+            case 5:
+                exit(0);  // Exit the program
+            default:
+                printf("Invalid choice\n");
+        }
+    }
+    return 0;
+}
