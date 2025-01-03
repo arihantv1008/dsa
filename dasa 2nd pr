@@ -1,0 +1,60 @@
+#include <stdio.h>
+
+char STR[100], PAT[100], REP[100], ANS[200];
+int s, p, r, a, flag = 0;
+
+// Function Declaration
+void read();
+void replace();
+void print();
+
+int main() {
+    read();    // Read input strings
+    replace(); // Perform the replacement
+    print();   // Display the result
+    return 0;
+}
+
+void read() {
+    printf("Enter the MAIN string: \n");
+    scanf(" %[^\n]s", STR); // Allow spaces in the main string
+    printf("Enter a PATTERN string: \n");
+    scanf("%s", PAT);       // Read pattern string
+    printf("Enter a REPLACE string: \n");
+    scanf("%s", REP);       // Read replace string
+}
+
+void replace() {
+    s = p = a = 0; // Initialize indices
+    while (STR[s] != '\0') {
+        // Checking for Match
+        if (STR[s] == PAT[p]) {
+            p++;
+            s++;
+            
+            // If the pattern is fully matched, replace it with the REP string
+            if (PAT[p] == '\0') {
+                flag = 1;
+                for (r = 0; REP[r] != '\0'; r++, a++) {
+                    ANS[a] = REP[r]; // Copy the replace string to ANS
+                }
+                p = 0; // Reset pattern index
+            }
+        } else { // Mismatch, copy the current character from STR to ANS
+            ANS[a] = STR[s];
+            s++;
+            a++;
+            p = 0; // Reset pattern index on mismatch
+        }
+    }
+    ANS[a] = '\0'; // Null terminate the resulting string
+}
+
+void print() {
+    if (flag == 0) {
+        printf("Pattern doesn't found!!!\n");
+    } else {
+        printf("\nThe RESULTANT string is:\n%s\n", ANS);
+    }
+}
+
